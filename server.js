@@ -30,22 +30,18 @@ client.connect(err => {
     const reviewsCollection = client.db("Plumbing").collection("reviews");
 
 
-    // Check user using email
+    // Verify New and Previous User Email Address
     app.get('/verify-email-address', (req, res) => {
         const verifyUserEmail = req.query.email;
         console.log(verifyUserEmail)
         usersCollection.find({ email: verifyUserEmail })
             .toArray((err, data) => {
-                console.log('Eita ami',data)
-                if(data === []){
-                    res.send("email: nai@gmail.com")
-                }else {
-                    res.send(data)
-                }
+                console.log('Eita ami', data)
+                res.send(data)
             })
     });
 
-    // Create User Automatically
+    // Create User Automatically if new and Save on DB
     app.post('/addNewUser', (req, res) => {
         console.log(req.body)
         const newUserDetails = req.body;
@@ -53,7 +49,55 @@ client.connect(err => {
             .then(result => {
                 res.send(result.insertedCount > 0)
             })
-    })
+    });
+
+    // Save Service on database
+    app.post('/addService', (req, res) => {
+        const newService = req.body;
+        console.log('adding new event: ', newService)
+        servicesCollection.insertOne(newService)
+            .then(result => {
+                res.send(result.insertedCount > 0)
+            })
+    });
+
+    // Get Service from database
+    app.get('/services', (req, res) => {
+        servicesCollection.find()
+        .toArray((err, items) => {
+            res.send(items);
+        })
+    });
+
+    // Get Service from Database using ID
+    app.get('/order/:id', (req, res) => {
+        const id = ObjectID(req.params.id);
+        servicesCollection.find({_id: id})
+        .toArray((err, product) => {
+            res.send(product);
+        })
+    });
+
+
+    // Save Review on database
+    app.post('/addReview', (req, res) => {
+        const newService = req.body;
+        console.log('adding new event: ', newService)
+        reviewsCollection.insertOne(newService)
+            .then(result => {
+                res.send(result.insertedCount > 0)
+            })
+    });
+
+    // Get Review from database
+    app.get('/reviews', (req, res) => {
+        reviewsCollection.find()
+        .toArray((err, items) => {
+            res.send(items);
+        })
+    });
+
+
 });
 
 
