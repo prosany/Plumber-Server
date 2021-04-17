@@ -64,19 +64,50 @@ client.connect(err => {
     // Get Service from database
     app.get('/services', (req, res) => {
         servicesCollection.find()
-        .toArray((err, items) => {
-            res.send(items);
-        })
+            .toArray((err, items) => {
+                res.send(items);
+            })
     });
 
-    // Get Service from Database using ID
+    // Get Order Details from Database using ID
     app.get('/order/:id', (req, res) => {
         const id = ObjectID(req.params.id);
-        servicesCollection.find({_id: id})
-        .toArray((err, product) => {
-            res.send(product);
-        })
+        servicesCollection.find({ _id: id })
+            .toArray((err, product) => {
+                res.send(product);
+            })
     });
+
+    // Confirm Order
+    app.post('/confirmOrder', (req, res) => {
+        const newOrder = req.body;
+        ordersCollection.insertOne(newOrder)
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+    });
+
+    // Get Order Details from Database using ID
+    app.get('/orderList', (req, res) => {
+        const userEmail = req.query.email;
+        console.log(userEmail)
+        ordersCollection.find({ email: userEmail })
+            .toArray((err, data) => {
+                console.log('Ei Id er order', data)
+                res.send(data)
+            })
+    });
+
+     // Get Order Details from Database using ID
+     app.get('/orders', (req, res) => {
+        ordersCollection.find()
+            .toArray((err, data) => {
+                console.log('Ei Id er order', data)
+                res.send(data)
+            })
+    });
+
+
 
 
     // Save Review on database
@@ -92,10 +123,21 @@ client.connect(err => {
     // Get Review from database
     app.get('/reviews', (req, res) => {
         reviewsCollection.find()
-        .toArray((err, items) => {
-            res.send(items);
-        })
+            .toArray((err, items) => {
+                res.send(items);
+            })
     });
+    // findOneAndUpdate({ email: { $regex : new RegExp(makeAdmin, "i")}}, { $set : {permission: "admin"}})
+
+    app.post('/makeAdmin', (req, res) => {
+        console.log(req.body);
+        const makeAdmin = req.body;
+        usersCollection.insertOne(makeAdmin)
+        .then(admin => {
+            console.log(admin);
+            res.send(admin.insertedCount > 0);
+        })
+    })
 
 
 });
