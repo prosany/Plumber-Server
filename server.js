@@ -199,7 +199,7 @@ client.connect(err => {
     });
 
 
-    // Update Order Status
+    // Manage Services
     app.delete('/manageService/:id', (req, res) => {
         const id = ObjectID(req.params.id);
         servicesCollection.deleteOne({ _id: id })
