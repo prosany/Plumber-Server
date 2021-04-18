@@ -5,11 +5,6 @@ const ObjectID = require('mongodb').ObjectID;
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-const admin = require("firebase-admin");
-const serviceAccount = require("./firebase-adminsdk.json");
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
 
 
 // Define Port Number
@@ -94,52 +89,21 @@ client.connect(err => {
 
     // Get Order Details from Database using ID
     app.get('/orderList', (req, res) => {
-        if (!req.headers.authorization) {
-            res.status(401).send('Unauthorized access')
-        } else (
-            admin.auth().verifyIdToken(req.headers.authorization)
-                .then((decodedToken) => {
-                    const uid = decodedToken.uid;
-                    const tokenEmail = decodedToken.email;
-                    const userEmail = req.query.email;
-                    if (tokenEmail == userEmail) {
-                        ordersCollection.find({ email: userEmail })
-                            .toArray((err, data) => {
-                                console.log('Ei Id er order', data)
-                                res.send(data)
-                            })
-                    } else {
-                        res.status(401).send('Unauthorized access')
-                    }
-                })
-                .catch((error) => {
-                    res.status(401).send('Unauthorized access')
-                })
-        )
+        const userEmail = req.query.email;
+        ordersCollection.find({ email: userEmail })
+            .toArray((err, data) => {
+                console.log('Ei Id er order', data)
+                res.send(data)
+            })
     });
 
     // Get Order Details from Database
     app.get('/orders', (req, res) => {
-        if (!req.headers.authorization) {
-            res.status(401).send('Unauthorized access')
-        } else (
-            admin.auth().verifyIdToken(req.headers.authorization)
-                .then((decodedToken) => {
-                    const uid = decodedToken.uid;
-                    if (uid) {
-                        ordersCollection.find()
-                            .toArray((err, data) => {
-                                console.log('Ei Id er order', data)
-                                res.send(data)
-                            })
-                    } else {
-                        res.status(401).send('Unauthorized access')
-                    }
-                })
-                .catch((error) => {
-                    res.status(401).send('Unauthorized access')
-                })
-        )
+        ordersCollection.find()
+            .toArray((err, data) => {
+                console.log('Ei Id er order', data)
+                res.send(data)
+            })
     });
 
     // Save Review on database
