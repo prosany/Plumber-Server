@@ -1,9 +1,9 @@
 # Plumbing.Com Server Side
 
-This is an online e-commerce website project. [Plumbing.Com](https://plumbing-com.web.app/) offers different types of products for example fruit, vegetables, snacks, soft drinks, etc. admin or user can add new products, delete products at any time or many more.
+This is Plumbing Service website project. [Plumbing.Com](https://plumbing-com.web.app/) offers Plumbing Services, Customer Can Order Any Service.
 
 ## Live Website Link
-Plumbing.Com Client][ClientSide] and [Plumbing.Com Server Side][ServerSide]
+Plumbing.Com Client[ClientSide] and [Plumbing.Com Server Side][ServerSide]
 
 ## Technology Used or Plugin
 
@@ -18,19 +18,19 @@ Plumbing.Com Client][ClientSide] and [Plumbing.Com Server Side][ServerSide]
 
 ## API's I Have Made
 
-- [ServerSide]/verify-email-address?email=email@email.com `(For Verify User Email From Database)`
-- [ServerSide]/addNewUser `(Create User Automatically if new and Save on DB)`
-- [ServerSide]/addService `(Save New Service on database)`
-- [ServerSide]/services `(Get Service from database)`
-- [ServerSide]/order/:id `(Get Order Details from Database using ID)`
-- [ServerSide]/confirmOrder `(Confirm Order)`
-- [ServerSide]/orderList `(Get Orders By Email from Database)`
-- [ServerSide]/orders `(Get Order Details from Database)`
-- [ServerSide]/addReview `(Save Review on database)`
-- [ServerSide]/reviews `(Get Reviews from database)`
-- [ServerSide]/makeAdmin `(Make New Admin)`
-- [ServerSide]/updateStatus/:id `(Update Order Status)`
-- [ServerSide]/manageService/:id `(Manage Services)`
+- https://plumbing-com.herokuapp.com/verify-email-address?email=email@email.com `(For Verify User Email From Database)`
+- https://plumbing-com.herokuapp.com/addNewUser `(Create User Automatically if new and Save on DB)`
+- https://plumbing-com.herokuapp.com/addService `(Save New Service on database)`
+- https://plumbing-com.herokuapp.com/services `(Get Service from database)`
+- https://plumbing-com.herokuapp.com/order/:id `(Get Order Details from Database using ID)`
+- https://plumbing-com.herokuapp.com/confirmOrder `(Confirm Order)`
+- https://plumbing-com.herokuapp.com/orderList `(Get Orders By Email from Database)`
+- https://plumbing-com.herokuapp.com/orders `(Get Order Details from Database)`
+- https://plumbing-com.herokuapp.com/addReview `(Save Review on database)`
+- https://plumbing-com.herokuapp.com/reviews `(Get Reviews from database)`
+- https://plumbing-com.herokuapp.com/makeAdmin `(Make New Admin)`
+- https://plumbing-com.herokuapp.com/updateStatus/:id `(Update Order Status)`
+- https://plumbing-com.herokuapp.com/manageService/:id `(Manage Services)`
  
 ## Installation Guide
 ### **SETPS**
