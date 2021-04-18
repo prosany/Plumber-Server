@@ -2,4 +2,3 @@ node_modules/
 .env
 dotenv.
 dotenv
-firebase-adminsdk.json
