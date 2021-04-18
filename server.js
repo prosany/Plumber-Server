@@ -5,6 +5,12 @@ const ObjectID = require('mongodb').ObjectID;
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const admin = require("firebase-admin");
+const serviceAccount = require("./firebase-adminsdk.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
 
 // Define Port Number
 const port = process.env.PORT || 8080;
@@ -32,13 +38,28 @@ client.connect(err => {
 
     // Verify New and Previous User Email Address
     app.get('/verify-email-address', (req, res) => {
-        const verifyUserEmail = req.query.email;
-        console.log(verifyUserEmail)
-        usersCollection.find({ email: verifyUserEmail })
-            .toArray((err, data) => {
-                console.log('Eita ami', data)
-                res.send(data)
-            })
+        if (!req.headers.authorization) {
+            res.status(401).send('Unauthorized access')
+        } else (
+            admin.auth().verifyIdToken(req.headers.authorization)
+                .then((decodedToken) => {
+                    const uid = decodedToken.uid;
+                    const tokenEmail = decodedToken.email;
+                    const verifyUserEmail = req.query.email;
+                    if (tokenEmail == verifyUserEmail) {
+                        usersCollection.find({ email: verifyUserEmail })
+                            .toArray((err, data) => {
+                                console.log('Eita ami', data)
+                                res.send(data)
+                            })
+                    } else {
+                        res.status(401).send('Unauthorized access')
+                    }
+                })
+                .catch((error) => {
+                    res.status(401).send('Unauthorized access')
+                })
+        )
     });
 
     // Create User Automatically if new and Save on DB
@@ -89,26 +110,53 @@ client.connect(err => {
 
     // Get Order Details from Database using ID
     app.get('/orderList', (req, res) => {
-        const userEmail = req.query.email;
-        console.log(userEmail)
-        ordersCollection.find({ email: userEmail })
-            .toArray((err, data) => {
-                console.log('Ei Id er order', data)
-                res.send(data)
-            })
+        if (!req.headers.authorization) {
+            res.status(401).send('Unauthorized access')
+        } else (
+            admin.auth().verifyIdToken(req.headers.authorization)
+                .then((decodedToken) => {
+                    const uid = decodedToken.uid;
+                    const tokenEmail = decodedToken.email;
+                    const userEmail = req.query.email;
+                    if (tokenEmail == userEmail) {
+                        ordersCollection.find({ email: userEmail })
+                            .toArray((err, data) => {
+                                console.log('Ei Id er order', data)
+                                res.send(data)
+                            })
+                    } else {
+                        res.status(401).send('Unauthorized access')
+                    }
+                })
+                .catch((error) => {
+                    res.status(401).send('Unauthorized access')
+                })
+        )
     });
 
-     // Get Order Details from Database using ID
-     app.get('/orders', (req, res) => {
-        ordersCollection.find()
-            .toArray((err, data) => {
-                console.log('Ei Id er order', data)
-                res.send(data)
-            })
+    // Get Order Details from Database
+    app.get('/orders', (req, res) => {
+        if (!req.headers.authorization) {
+            res.status(401).send('Unauthorized access')
+        } else (
+            admin.auth().verifyIdToken(req.headers.authorization)
+                .then((decodedToken) => {
+                    const uid = decodedToken.uid;
+                    if (uid) {
+                        ordersCollection.find()
+                            .toArray((err, data) => {
+                                console.log('Ei Id er order', data)
+                                res.send(data)
+                            })
+                    } else {
+                        res.status(401).send('Unauthorized access')
+                    }
+                })
+                .catch((error) => {
+                    res.status(401).send('Unauthorized access')
+                })
+        )
     });
-
-
-
 
     // Save Review on database
     app.post('/addReview', (req, res) => {
@@ -127,17 +175,38 @@ client.connect(err => {
                 res.send(items);
             })
     });
-    // findOneAndUpdate({ email: { $regex : new RegExp(makeAdmin, "i")}}, { $set : {permission: "admin"}})
 
+    // Make New Admin
     app.post('/makeAdmin', (req, res) => {
         console.log(req.body);
         const makeAdmin = req.body;
         usersCollection.insertOne(makeAdmin)
-        .then(admin => {
-            console.log(admin);
-            res.send(admin.insertedCount > 0);
-        })
+            .then(admin => {
+                console.log(admin);
+                res.send(admin.insertedCount > 0);
+            })
     })
+
+    // Update Order Status
+    app.patch('/updateStatus/:id', (req, res) => {
+        ordersCollection.updateOne({ _id: ObjectID(req.params.id) },
+            {
+                $set: { status: req.body.updatedStatus }
+            })
+            .then(result => {
+                res.send(result.modifiedCount > 0);
+            })
+    });
+
+
+    // Update Order Status
+    app.delete('/manageService/:id', (req, res) => {
+        const id = ObjectID(req.params.id);
+        servicesCollection.deleteOne({ _id: id })
+            .then(result => {
+                res.send(result.deletedCount > 0);
+            })
+    });
 
 
 });
