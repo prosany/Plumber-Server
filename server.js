@@ -38,28 +38,11 @@ client.connect(err => {
 
     // Verify New and Previous User Email Address
     app.get('/verify-email-address', (req, res) => {
-        if (!req.headers.authorization) {
-            res.status(401).send('Unauthorized access')
-        } else (
-            admin.auth().verifyIdToken(req.headers.authorization)
-                .then((decodedToken) => {
-                    const uid = decodedToken.uid;
-                    const tokenEmail = decodedToken.email;
-                    const verifyUserEmail = req.query.email;
-                    if (tokenEmail == verifyUserEmail) {
-                        usersCollection.find({ email: verifyUserEmail })
-                            .toArray((err, data) => {
-                                console.log('Eita ami', data)
-                                res.send(data)
-                            })
-                    } else {
-                        res.status(401).send('Unauthorized access')
-                    }
-                })
-                .catch((error) => {
-                    res.status(401).send('Unauthorized access')
-                })
-        )
+        usersCollection.find({ email: verifyUserEmail })
+            .toArray((err, data) => {
+                console.log('Eita ami', data)
+                res.send(data)
+            })
     });
 
     // Create User Automatically if new and Save on DB
